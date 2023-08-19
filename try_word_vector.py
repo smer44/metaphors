@@ -1,5 +1,5 @@
 import numpy as np
-filename = "ruscorpora_upos_skipgram_300_5_2018.vec"
+filename = "../ruscorpora_upos_skipgram_300_5_2018.vec"
 
 dictionary_size = None
 names, vectors = [] , []
