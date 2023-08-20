@@ -1,0 +1,33 @@
+
+- living animal human intelligent
+человек
+- living animal human intelligent young
+ребёнок
+
+- living animal human intelligent male
+мужчина
+- living animal human intelligent female old
+старик
+- living animal human intelligent female
+женщина
+- living animal human intelligent female old
+старуха
+
+- living animal human intelligent group relation biological
+семья
+- living animal human intelligent relation biological male
+отец
+папа
+сын
+внук
+дед
+дядя
+брат
+- living animal human intelligent relation biological female
+мать
+мама
+дочь
+внучка
+бабушка
+тётя
+сестра

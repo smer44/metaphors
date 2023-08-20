@@ -1,0 +1,22 @@
+-cook
+Сито
+
+-сontainer cook
+Сковорода
+Кастрюля
+
+-container cook electro
+Микроволновка
+
+-container
+Чашка
+Тарелка
+Горшок
+
+-cutlery
+Вилка
+Ложка
+Нож
+
+
+
