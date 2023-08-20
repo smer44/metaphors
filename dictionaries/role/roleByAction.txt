@@ -1,0 +1,20 @@
+-transport
+Пассажир
+Груз
+-intelligent transport
+Водитель
+-intelligent creator
+Автор
+Архитектор
+Дизайнер
+-personalRelation
+друг
+враг
+партнёр
+соперник
+соратник
+-personalRelation team
+сотрудник
+руководитель
+вождь
+коллега
