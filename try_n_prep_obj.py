@@ -37,32 +37,35 @@ def store_dict(file_name,dictionary):
                 line = f"{key}:{formatted_value}\n"
                 out_file.writelines(line)
 
-dictionary2 = dict()
-for key, value in dictionary.items():
-    summ_set = None
-    for item in value:
-        next_set = backwards_dictionary.get(item, set())
-        if next_set:
-            if summ_set is None:
-                next_set.remove(key)
-                summ_set = next_set
-            else:
-                summ_set = summ_set.intersection(next_set)
-    dictionary2[key] = summ_set
 
-dictionary3 = dict()
-for key, value in dictionary2.items():
-    summ_set = None
-    for item in value:
-        next_set = dictionary.get(item, set())
-        if next_set:
-            summ_set = next_set
-        else:
-            summ_set = summ_set.intersection(next_set)
-    dictionary3[key] = summ_set
+def intersect_set_values(dictionary, reference_dict):
+    dictionary2 = dict()
+    for key, value in dictionary.items():
+        summ_set = None
+        if not value: continue
+        for item in value:
+            next_set = reference_dict.get(item, set())
+            if next_set:
+                if summ_set is None:
+                    if key in next_set:
+                        next_set.remove(key)
+                    summ_set = next_set
+                else:
+                    summ_set = summ_set.intersection(next_set)
+        dictionary2[key] = summ_set
+    return dictionary2
+
+dictionary2 = intersect_set_values(dictionary, backwards_dictionary )
+backwards_dictionary2 = intersect_set_values(backwards_dictionary, dictionary )
+
+dictionary3 = intersect_set_values(dictionary2, dictionary )
+backwards_dictionary3 = intersect_set_values(backwards_dictionary2, backwards_dictionary )
+
+dictionary4 = intersect_set_values(dictionary3, backwards_dictionary3 )
+backwards_dictionary4 = intersect_set_values(backwards_dictionary3, dictionary3 )
+
+dictionary_final = intersect_set_values(dictionary4, dictionary2 )
 
 
-
-
-output3 = f"next_step_dict_n_prep_obj.txt"
-store_dict(output3,dictionary3)
+output3 = f"next2_step_dict_n_prep_obj.txt"
+store_dict(output3,dictionary_final)
