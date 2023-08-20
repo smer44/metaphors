@@ -32,3 +32,18 @@
 
 -nonliving cover
 земля
+
+-music_instrument  brass
+кларнет
+туба
+фагот
+
+-music_instrument keys
+баян
+
+
+-food
+рататуй
+тирамису
+паэлья
+нигири
