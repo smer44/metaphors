@@ -6,8 +6,11 @@
 светлый
 # светлая память, светлые мысли
 
--good skill_intelligence
+-good_skill_intelligence
 светлый ум
+
+-bad_skill_intelligence
+пустая голова
 
 -bad information
 горькая
@@ -47,3 +50,5 @@
 течение
 движение
 
+-part bad_quality
+aхиллесова пята
