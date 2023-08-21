@@ -6,7 +6,7 @@ def load_nprep_obj_file(filename):
     with open(filename, 'r', encoding='utf-8') as file:
         dictionary = dict()
         backwards_dictionary = dict()
-        limit = 100000
+        limit = -100000
         for line in file.readlines():
             limit -=1
             if limit == 0: break
@@ -47,7 +47,7 @@ def key_key_weighted(dictionary, backwards_dictionary):
             key_key_weights[key] /= norma
 
         sorted_list = [(key, value) for key, value in key_key_weights.items()]
-        sorted_list.sort(key = lambda tuple : tuple[1])
+        sorted_list.sort(key = lambda tuple : -tuple[1])
         sorted_list = sorted_list[:50]
         key_key_dict[key] = sorted_list
     return key_key_dict
@@ -69,8 +69,8 @@ backwards_dictionary = set_uniform_weights(backwards_dictionary)
 
 key_key_dict = key_key_weighted(dictionary, backwards_dictionary)
 key_key_dict = key_key_weighted(key_key_dict, key_key_dict)
-key_key_dict = key_key_weighted(key_key_dict, key_key_dict)
-key_key_dict = key_key_weighted(key_key_dict, key_key_dict)
+#key_key_dict = key_key_weighted(key_key_dict, key_key_dict)
+#key_key_dict = key_key_weighted(key_key_dict, key_key_dict)
 #pp.pprint(key_key_dict)
 
 output = f"weighted_dict_n_prep_obj.txt"

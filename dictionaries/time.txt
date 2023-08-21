@@ -1,4 +1,4 @@
--daytime adjective
+-part_day adjective
 ночной
 утренний
 дневной
@@ -9,7 +9,7 @@
 полуденный
 рассветный
 
--daytime noun
+-part_day noun
 рассвет
 закат
 ночь
@@ -20,10 +20,10 @@
 полночь
 полдень
 
--daytime adverb
+-part_day adverb
 поутру
 
--day day_week
+-day part_week noun
 понедельник
 вторник
 среда
@@ -32,12 +32,25 @@
 суббота
 воскресенье
 
--week
+-week part_year
 неделя
--month
-месяц
 
--yearSeasons
+-month part_year grigorian_calender
+месяц
+Январь
+Февраль
+Март
+Апрель
+Май
+Июнь
+Июль
+Август
+Сентябрь
+Октябрь
+Ноябрь
+Декабрь
+
+-season part_year
 Весна
 Лето
 Осень

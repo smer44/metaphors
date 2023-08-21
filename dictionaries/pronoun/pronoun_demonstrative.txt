@@ -1,0 +1,23 @@
+- object.location.near
+это
+- object.location.near singular male
+этот
+- object.location.near singular female
+эта
+- object.location.near singular neuter
+это
+- object.location.near plural
+эти
+
+- object.location.far
+то
+- object.location.far singular male
+тот
+- object.location.far singular female
+та
+- object.location.far singular neuter
+то
+- object.location.far plural
+те
+
+-

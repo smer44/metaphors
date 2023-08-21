@@ -1,0 +1,57 @@
+-person.first singular other.singular other.male
+мой
+-person.first singular other.singular other.female
+моя
+-person.first singular other.singular other.neuter
+моё
+-person.first singular other.plural
+мои
+
+-person.second singular other.singular other.male
+твой
+-person.second singular other.singular other.female
+твоя
+-person.second singular other.singular other.neuter
+твоё
+-person.second singular other.plural
+твои
+
+-person.third singular male
+его
+-person.third singular female
+её
+-person.third singular neuter
+его
+
+-person.first plural other.singular other.male
+наш
+-person.first plural other.singular other.female
+наша
+-person.first plural other.singular other.neuter
+наше
+-person.first plural other.plural
+наши
+
+-person.second plural other.singular other.male
+ваш
+-person.second plural other.singular other.female
+ваша
+-person.second plural other.singular other.neuter
+ваше
+-person.second plural other.plural
+ваши
+
+-person.third plural other.plural
+их
+
+-person.third plural other.singular other.male
+ихний
+-person.third plural other.singular other.female
+ихняя
+-person.third plural other.singular other.neuter
+ихнее
+-person.third plural other.plural
+ихние
+
+
+

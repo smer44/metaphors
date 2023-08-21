@@ -1,0 +1,15 @@
+-surrounding.solid.on
+передвигаться
+бегать
+идти
+ходить
+
+-surroundings.gas.in
+летать
+-surroundings.water.in
+плавать
+нырять
+-surroundings.water.on
+плавать
+-art gesture
+танцевать
