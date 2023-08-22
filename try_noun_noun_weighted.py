@@ -1,6 +1,6 @@
 import pprint as pp
 
-filename = "../n_prep_obj.txt"
+filename = "../datasets/n_prep_obj.txt"
 
 def load_nprep_obj_file(filename):
     with open(filename, 'r', encoding='utf-8') as file:

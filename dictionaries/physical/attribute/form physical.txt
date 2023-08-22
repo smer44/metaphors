@@ -56,17 +56,9 @@
 Криворукий
 
 - nd_form adjective animal good
-Грациозный
 Атлетичный
 
-- nd_form adjective good
-Элегантный
-Гармоничный
-Изящный
-Очаровательный
-Привлекательный
-Завораживающий
-Миловидный
+
 
 - nd_form adjective good human
 Обольстительный

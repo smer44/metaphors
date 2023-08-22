@@ -9,6 +9,9 @@
 - object.location.near plural
 эти
 
+- object.location.near case.prepositional
+этом
+
 - object.location.far
 то
 - object.location.far singular male

@@ -4,6 +4,11 @@
 - living animal human intelligent young
 ребёнок
 
+- living animal human intelligent young female
+девочка
+- living animal human intelligent young male
+мальчик
+
 - living animal human intelligent male
 мужчина
 - living animal human intelligent female old

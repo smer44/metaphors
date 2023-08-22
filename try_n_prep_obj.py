@@ -2,7 +2,7 @@ import pprint as pp
 
 import numpy as np
 
-filename = "../n_prep_obj.txt"
+filename = "../datasets/n_prep_obj.txt"
 
 
 def load_nprep_obj_file(filename):
