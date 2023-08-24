@@ -1,4 +1,23 @@
-- noun derived.adjective.богатый
+- noun derived.богатый
 богатство
-- noun derived.adjective.бедный
+- noun derived.бедный
 бедность
+-
+тонкость
+сложность
+деликатность
+прозрачность
+выразительность
+
+-quality.good
+красота
+
+-noun derived.увлекать mental
+увлечение
+
+
+-noun quality.good art
+шедевр
+
+-noun quality.good subject
+мастер

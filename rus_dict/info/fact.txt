@@ -4,8 +4,20 @@
 факт
 знак
 слово
+-part
+аспект
+признак
+-rule
+правило
+
+-mental emotion
+впечатление
+
 -set
 история
+-set infotype.text rule
+грамматика
+лексика
 
 - infotype.visual ?
 рисунок

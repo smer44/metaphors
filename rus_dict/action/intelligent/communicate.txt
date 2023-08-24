@@ -20,13 +20,19 @@
 -verb intelligent give.information perfective infotype.sound transitive addressative
 сообщить
 
--verb intelligent give.information perfective transitive addressative
+-verb intelligent give.information imperfective transitive addressative
 сообщать
+напоминать
+вдохновлять
+уведомлять
+побуждать
 
 -verb intelligent give.information perfective transitive.alarm addressative
 предостерегать
 предупреждать
-уведомлять
+вдохновить
+уведомить
+побудить
 
 
 -verb intelligent.strong give.information imperfective transitive.приглашение addressative

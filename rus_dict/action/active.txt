@@ -1,6 +1,10 @@
 -imperfective
 делать
 
+-perfective.final part
+начать
+закончить
+
 -perfective
 сделать
 
@@ -64,3 +68,13 @@
 
 -perfective
 проложить
+
+-imperfective discover
+открывать
+находить
+исследовать
+
+-perfective discover
+открыть
+найти
+-

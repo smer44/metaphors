@@ -36,7 +36,7 @@
 ниже
 
 
--relative adverb relative.someDifference
+-relative adverb ?
 Вбок
 
 -relative adverb surrounding.other
@@ -47,3 +47,9 @@
 
 -relative adverb destination.near
 сюда
+
+-relative part adjective end
+конечный
+
+-relative part noun end
+итог

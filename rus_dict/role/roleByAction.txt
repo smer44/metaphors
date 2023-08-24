@@ -1,20 +1,22 @@
 -transport
 Пассажир
 Груз
--intelligent transport
+-subject transport
 Водитель
--intelligent creator
+-subject creator
 Автор
 Архитектор
 Дизайнер
--personalRelation
+-subject roleIn.personal
 друг
 враг
 партнёр
 соперник
 соратник
--personalRelation team
+-subject roleIn.team
 сотрудник
 руководитель
 вождь
 коллега
+-subject roleIn.guard
+хранитель

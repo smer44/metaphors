@@ -10,6 +10,10 @@
 решить
 подумать
 задумать
+
+-perfective gain.info
+осознать
+
 -perfective.start gain.info
 понять
 -perfective.start

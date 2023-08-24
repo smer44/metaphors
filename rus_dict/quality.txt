@@ -46,9 +46,11 @@
 -adverb state
 нужно
 
--adjective fictional.fairyTale
+-adjective fictional
 сказочный
 чудесный
+волшебный
+выдуманный
 
 -adverb intelligent
 игриво
@@ -56,5 +58,23 @@
 -adverb
 точно
 
+-adverb mental
+интересно
+
 -adjective
 героический
+
+настоящий
+
+-adjective evaluation.priority.high
+важный
+
+-adverb evaluation.priority.high
+важно
+
+-noun derived.важный evaluation.priority.high
+важность
+
+-adjective relation.near
+родной
+
