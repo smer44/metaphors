@@ -1,0 +1,31 @@
+-surrounding.solid.on living plant multiple
+зелень
+луг
+поле
+трава
+
+-weather
+снег
+слякоть
+
+- surrounding.solid.on
+земля
+
+- surrounding.solid.on location.low
+долина
+
+-group surrounding.solid.on form.obstackle.group.line.vertical
+лес
+
+- surrounding.solid.on location.high
+гора
+холм
+
+- surrounding.liquid form.line.curve
+река
+
+- surrounding.liquid form.volume
+озеро
+
+- surrounding.solid.on part near.surrounding.liquid
+берег

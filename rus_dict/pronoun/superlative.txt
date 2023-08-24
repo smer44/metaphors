@@ -1,0 +1,10 @@
+-number.singular gender.male
+самый
+-number.singular gender.female
+самая
+-number.singular gender.neuter
+самое
+-number.plural
+самые
+
+

@@ -5,10 +5,10 @@ import stanza
 #stanza.download("en")
 #stanza.download("ru")
 
-nlp = stanza.Pipeline('ru',download_method=None)
+nlp = stanza.Pipeline('ru',processors = "tokenize,pos,lemma,depparse", download_method=None)
 
 
-#print(doc)
+
 #print(doc.entities)
 
 def validate_stanza_sentence(sentence):
@@ -27,13 +27,15 @@ def validate_stanza_doc(doc):
         validate_stanza_sentence(sentence)
 
 
-doc = nlp("Жил пёс. Пёс был серый.")
+doc = nlp("Пёс был серым")
+print(doc)
 validate_stanza_doc(doc)
 
 
 filename = "../../datasets/facts_gpt.txt"
-
+"""
 with open(filename, "r", encoding='utf-8') as file:
     text = file.read()
     doc = nlp(text)
     validate_stanza_doc(doc)
+"""

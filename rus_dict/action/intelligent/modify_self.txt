@@ -1,0 +1,23 @@
+-put.inside.self imperfective
+поглощать
+
+-put.inside.self perfective
+поглотить
+
+
+-other.liquid put.inside.self imperfective
+пить
+-other.solid put.inside.self imperfective
+есть
+кушать
+уминать
+-other.liquid put.inside.self imperfective.secondary
+выпивать
+
+-other.liquid put.inside.self imperfective.secondary
+съесть
+
+
+-other.liquid put.inside.self perfective
+выпить
+

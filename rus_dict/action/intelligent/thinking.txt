@@ -1,0 +1,17 @@
+-imperfective
+хотеть
+решать
+думать
+размышлять
+вдохновляться
+-imperfective gain.info
+понимать
+-perfective
+решить
+подумать
+задумать
+-perfective.start gain.info
+понять
+-perfective.start
+захотеть
+задуматься

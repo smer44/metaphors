@@ -1,0 +1,11 @@
+-imperfective
+жить
+дышать
+
+-imperfective changeState.self
+умирать
+
+
+-perfective.start changeState.self
+ожить
+умереть

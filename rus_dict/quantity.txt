@@ -1,0 +1,5 @@
+-adverb
+много
+-adverb comarative.много
+больше
+

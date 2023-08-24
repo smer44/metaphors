@@ -1,0 +1,49 @@
+-relative adverb
+здесь
+справа
+слева
+прямо
+Вверху
+Внизу
+Сверху
+Снизу
+Впереди
+Позади
+Близко
+Далеко
+Около
+Вблизи
+Вдали
+Внутри
+Снаружи
+Наверху
+Внизу
+Слева
+Справа
+
+
+
+Перед
+За
+Между
+
+-relative adverb comparative
+ближе
+дальше
+правее
+левее
+выше
+ниже
+
+
+-relative adverb relative.someDifference
+Вбок
+
+-relative adverb surrounding.other
+сквозь
+
+-relative adverb destination.far
+туда
+
+-relative adverb destination.near
+сюда

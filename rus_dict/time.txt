@@ -1,0 +1,77 @@
+-part_day adjective
+ночной
+утренний
+дневной
+вечерний
+сумеречный
+полночный
+полуночный
+полуденный
+рассветный
+
+-part_day noun
+рассвет
+закат
+ночь
+утро
+день
+вечер
+сумерки
+полночь
+полдень
+
+-part_day adverb
+поутру
+
+-day part_week noun
+понедельник
+вторник
+среда
+четверг
+пятница
+суббота
+воскресенье
+
+-week part_year
+неделя
+
+-month part_year grigorian_calender
+месяц
+Январь
+Февраль
+Март
+Апрель
+Май
+Июнь
+Июль
+Август
+Сентябрь
+Октябрь
+Ноябрь
+Декабрь
+
+-season part_year
+Весна
+Лето
+Осень
+Зима
+
+-day relative
+завтра
+послезавтра
+вчера
+позавчера
+сегодня
+
+-absolute adverb.pronoun negation
+никогда
+-absolute adverb.pronoun affirmation
+всегда
+
+-adverb undefinite
+однажды
+
+-part
+наконец
+вначале
+

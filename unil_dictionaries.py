@@ -43,10 +43,10 @@ def load_words_from_file(file_path,file_tags,dictionary):
                     dictionary[line] = current_tags
 
 
-dictionary = load_dict_folder("dictionaries")
+dictionary = load_dict_folder("rus_dict")
 
 print("dictionary size : ", len(dictionary))
-pp.pprint(dictionary)
+#pp.pprint(dictionary)
 
 def read_file_to_words(file_name):
     #TODO - not supported ""
@@ -59,6 +59,7 @@ def read_file_to_words(file_name):
                 line = line.replace(".", " ")
                 line = line.replace("!", " ")
                 line = line.replace("?", " ")
+                line = line.replace("\"", " ")
                 line_words = [word.strip() for word in  line.split()]
                 words.extend(line_words)
     return words
@@ -85,9 +86,10 @@ def read_file_to_stammings(file_name):
 
 
 def check_known(dictionary, stammings, words):
+    skip = set("–")
     for word in words:
         word = word.lower()
-        if word in dictionary:
+        if word in dictionary or word in skip:
             continue
         possible_stammings = stammings.get(word, [])
         for word_variant in possible_stammings:

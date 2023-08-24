@@ -1,0 +1,4 @@
+- noun derived.adjective.богатый
+богатство
+- noun derived.adjective.бедный
+бедность

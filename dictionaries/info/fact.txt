@@ -1,2 +1,0 @@
--set fiction.fairyTale
-сказка
