@@ -55,12 +55,12 @@ with open(output, 'w', encoding='utf-8') as out_file:
 print(f"dictionary stored in output file : {output}")
 
 #--
-def save_dict(out_file):
-    with open(output, 'w', encoding='utf-8') as out_file:
-        for key, value in distances.items():
+def save_dict(out_file , dictionary):
+    with open(out_file, 'w', encoding='utf-8') as file:
+        for key, value in dictionary.items():
             #formatted_key = str(key)
             formatted_value = ",".join(f"{pair[0]}:{pair[1]}" for pair in value)
             line = f"{key}:{formatted_value}\n\n"
-            out_file.writelines (line)
+            file.writelines (line)
 
 
