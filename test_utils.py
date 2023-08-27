@@ -10,7 +10,15 @@ second_items = set(second_line.split(","))
 
 common = first_items.intersection(second_items)
 
-print(len(common))
+#print(len(common))
+
+d = {"a" : 1, "b" : 2}
+d2 = {"a" : 3, "c" : 4}
+
+
+
+
+
 
 
 

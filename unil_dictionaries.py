@@ -43,7 +43,7 @@ def load_words_from_file(file_path,file_tags,dictionary):
                     dictionary[line] = current_tags
 
 
-dictionary = load_dict_folder("rus_dict")
+dictionary = load_dict_folder("../../yontology/rus_dict")
 
 print("dictionary size : ", len(dictionary))
 #pp.pprint(dictionary)
