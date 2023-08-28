@@ -13,28 +13,29 @@ class yNgrams:
         for key, value in opts.items():
             self.opts[key.strip()] = value
 
-    def load_file_lines(self, filename):
-        line_handling = self.opts.get("line_handling","load_line")
-        if line_handling == "load_line":
-
+    def load(self, filename, encoding='utf-8'):
+        line_handling = self.opts.get("line_handling",None)
+        if line_handling == "load":
             line_handling = self.load_line
-        elif line_handling == "inspect_line":
+        elif line_handling == "inspect":
             line_handling = self.inspect_line
+            self.length_histo = dict()
         else :
             raise ValueError("NGrams.load_file_lines : wrong line_handling option")
 
             line_handling = self.load_line
 
-        for line in self.yield_lines(filename):
+        for n, line in enumerate(self.yield_lines(filename,encoding)):
+
             line_handling(line)
 
-    def yield_lines(self,filename):
+    def yield_lines(self,filename, encoding):
         self.word_set = set()  if self.opts.get("use_word_set",False) else None
         self.forward = dict() if self.opts.get("ngrams_forward", False) else None
         self.backward = dict() if self.opts.get("ngrams_backward", False) else None
         max_lines = self.opts.get("max_lines" , -1)
 
-        with (open(filename, 'r', encoding='utf-8') as file):
+        with (open(filename, 'r', encoding=encoding) as file):
             for line in file.readlines():
                 line = line.strip()
                 if line:
@@ -45,7 +46,6 @@ class yNgrams:
 
     def load_line(self,line):
         split_symbol = self.opts.get("split_symbol", None)
-        use_word_set = self.opts.get("use_word_set", False)
         items = line.split(split_symbol)
         self.check_line_split(items)
         items = [item.strip() for item in items]
@@ -56,6 +56,11 @@ class yNgrams:
 
     def inspect_line(self, line):
         split_symbol = self.opts.get("split_symbol", None)
+        items = line.split(split_symbol)
+        len_items = len(items)
+        #print(len(items) , " : " ,  items)
+        self.length_histo.setdefault(len_items,0)
+        self.length_histo[len_items] +=1
 
 
 
@@ -63,8 +68,8 @@ class yNgrams:
 
 
     def load_line_items(self, items):
-        weight = float(items[-1].strip())
-        value = items[-2].strip()
+        weight = float(items[-1])
+        value = items[-2]
         key = " ".join(items[:-2])
         if self.forward is not None:
             key_dict = self.forward.setdefault(key, dict())
@@ -74,6 +79,10 @@ class yNgrams:
             key_dict = self.back.setdefault(value, dict())
             old_weight = key_dict.setdefault(key, 0)
             key_dict[key] = old_weight + weight
+
+    def load_10_items(self, items):
+        id,verb,subject,genitive,dative,accusative,instrumentative, prepositive,no_case,sentence = items
+
 
     def sort_value_vector_thrashold(self, d, thrashhold_absolute):
         for key, vector in d.items():
