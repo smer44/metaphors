@@ -1,26 +1,27 @@
-from  yngrams import yNgrams
+from  ystream import *
+
+
 
 file_name = "E:\data\dictionaries\case_frames_0.fr.txt"
+encoding=  'cp1251'
+folder_name = "E:\data\dictionaries"
 
+files = yFileNamesStream(folder_name)
 
+linegen = yFileLinesLoader(files, encoding,-100000)
 
-opts = {"item_per_line" : True,
-        #"line_handling" : "inspect",
-        "line_handling" : "load",
-        "max_lines " : 10000000,
-        "ngrams_forward": True,
-        "split_len_expected": 10,
-        "split_symbol" : "\t",
-        "continue_after_error" : True,
-        "distance_method" : "1w"}
+sentences = yLastItemStream(linegen, "\t")
 
-#encoding='utf-8' # basic encoding
-#encoding='windows-1253'#no
-#encoding= 'iso-8859-7'#no
-encoding=  'cp1251'#alt russian encoding
+uniques = yUniqueStream(sentences)
 
-yng = yNgrams(opts)
+import spacy
+lang_name = 'ru_core_news_sm'
+clauses =yClausesSpacy(uniques,spacy,lang_name)
 
-yng.load(file_name, encoding=encoding)
+output_encoding=  'utf-8'
+output_file_name = "../datasets/out_claues.txt"
 
-print(yng.length_histo)
+saver = yFileLinesSaver(clauses, output_file_name, output_encoding, True)
+
+saver.save()
+

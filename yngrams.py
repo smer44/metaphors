@@ -7,27 +7,40 @@ class yNgrams:
 
     def __init__(self, opts):
         self.opts = dict()
+
+
+        self.line_handling_variants = {"load" : self.load_line,
+                                       "inspect" : self.inspect_line}
+        self.item_handling_variants = {"weighted_pair" : self.handle_weighted_pair,
+                                       "items10" : self.hangle_10_items}
         self.configure(opts)
 
     def configure(self, opts):
         for key, value in opts.items():
             self.opts[key.strip()] = value
 
-    def load(self, filename, encoding='utf-8'):
-        line_handling = self.opts.get("line_handling",None)
+        line_handling = self.opts.get("line_handling", None)
+        if not line_handling:
+            raise ValueError("NGrams.configure : no line_handling option given")
+        self.line_handling_method = self.line_handling_variants.get(line_handling, None)
+        if not self.line_handling_method:
+            raise ValueError("NGrams.configure : wrong line_handling option given")
         if line_handling == "load":
-            line_handling = self.load_line
-        elif line_handling == "inspect":
-            line_handling = self.inspect_line
-            self.length_histo = dict()
-        else :
-            raise ValueError("NGrams.load_file_lines : wrong line_handling option")
+            items_handling = self.opts.get("items_handling", None)
+            if not items_handling:
+                raise ValueError("NGrams.configure : no items_handling option given")
+            self.item_handling_method = self.item_handling_variants.get(items_handling, None)
+            if not self.item_handling_method:
+                raise ValueError("NGrams.configure : wrong item_handling option given")
 
-            line_handling = self.load_line
 
+
+
+
+    def load(self, filename, encoding='utf-8'):
+        line_handling_method = self.line_handling_method
         for n, line in enumerate(self.yield_lines(filename,encoding)):
-
-            line_handling(line)
+            line_handling_method(line)
 
     def yield_lines(self,filename, encoding):
         self.word_set = set()  if self.opts.get("use_word_set",False) else None
@@ -52,7 +65,7 @@ class yNgrams:
         if self.word_set:
             self.word_set.update(items)
         #this must be customized:
-        self.load_line_items(items)
+        self.item_handling_method(items)
 
     def inspect_line(self, line):
         split_symbol = self.opts.get("split_symbol", None)
@@ -67,7 +80,7 @@ class yNgrams:
 
 
 
-    def load_line_items(self, items):
+    def handle_weighted_pair(self, items):
         weight = float(items[-1])
         value = items[-2]
         key = " ".join(items[:-2])
@@ -80,8 +93,10 @@ class yNgrams:
             old_weight = key_dict.setdefault(key, 0)
             key_dict[key] = old_weight + weight
 
-    def load_10_items(self, items):
-        id,verb,subject,genitive,dative,accusative,instrumentative, prepositive,no_case,sentence = items
+    def hangle_10_items(self, items):
+        print(len(items) , items)
+        #id,verb,subject,genitive,dative,accusative,instrumentative, prepositive,no_case,sentence = items
+        #print(subject, verb, genitive,dative,accusative,instrumentative, prepositive,no_case)
 
 
     def sort_value_vector_thrashold(self, d, thrashhold_absolute):

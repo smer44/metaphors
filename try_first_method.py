@@ -36,13 +36,13 @@ def load_nprep_obj_file(filename):
 
 dictionary,backwards_dictionary = load_nprep_obj_file(filename)
 
-common = dictionary["женщина"].intersection(dictionary["мужчина"])
+#common = dictionary["женщина"].intersection(dictionary["мужчина"])
 
-woman_only = dictionary["женщина"] - common
-man_only = dictionary["мужчина"] - common
+#woman_only = dictionary["женщина"] - common
+#man_only = dictionary["мужчина"] - common
 
-print(woman_only)
-print(man_only)
+#print(woman_only)
+#print(man_only)
 
 
 #pp.pprint(dictionary)
