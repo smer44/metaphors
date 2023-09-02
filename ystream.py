@@ -93,13 +93,12 @@ class yFileNamesStream:
 
 
 
-class yFileLinesLoader(yAbstractGenStream):
+class yFileLinesStream(yAbstractGenStream):
 
-    def __init__(self,source , encoding, max_lines = -1):
-        self.opts( source , encoding, max_lines)
+    def __init__(self, encoding, max_lines = -1):
+        self.opts(  encoding, max_lines)
 
-    def opts(self, source , encoding, max_lines = -1):
-        self.source = source
+    def opts(self,  encoding, max_lines = -1):
         self.encoding = encoding
         self.max_lines = max_lines
 
@@ -114,6 +113,15 @@ class yFileLinesLoader(yAbstractGenStream):
                         break
                     max_lines -=1
                     yield line
+
+    def src(self,other):
+        if isinstance(other,str):
+            other = [other]
+        self.source = other
+
+    def __gt__(self, other):
+        other.source = self
+
 
 class yLastItemStream(yAbstractStream):
 
@@ -139,6 +147,56 @@ class yUniqueStream(yAbstractFilterStream):
         if this_hash != self.last_hash:
             self.last_hash = this_hash
             return item
+
+class yNGramsLinesLoad():
+
+    def __init__(self, split_key_value, split_list):
+        self.conf(split_key_value,split_list)
+        self.ngrams = dict()
+
+    def conf(self, split_key_value, split_list):
+        self.split_key_value = split_key_value
+        self.split_list =split_list
+
+
+    def store(self):
+        for line in self.source:
+            line = line.strip()
+            ngrams = self.ngrams
+            backward_dict = dict()
+            if line:
+                #vector = line.split(self.split_key_value, maxsplit = 2)
+                #print(vector)
+                key, vector = line.split(self.split_key_value, maxsplit = 1)
+                key, vector = key.strip(), vector.strip()
+                assert key not in ngrams , f" key {key} is already in dictionary :\n - line {line}\n vector : {vector}"
+                vector_store = ngrams.setdefault(key, list())
+                for item_pair in vector.split(self.split_list):
+                    item_pair = item_pair.strip()
+                    item , weight = item_pair.split(self.split_key_value)
+                    item, weight = item.strip(), weight.strip()
+                    weight = int(weight)
+                    vector_store.append((item,weight))
+                    if item not in ngrams:
+                        backward_vector_store = backward_dict.setdefault(item, dict())
+                        assert key not in backward_vector_store
+                        backward_vector_store[key] = weight
+
+        for backward_key,  backward_vector_store in backward_dict.items():
+            sorted_vector = sorted( backward_vector_store.items() , key = lambda item_weight_pair : -item_weight_pair[1] )
+            assert backward_key not in  ngrams , f" backward_key {backward_key} is already in dictionary"
+            ngrams[backward_key] = sorted_vector
+
+
+    def __gt__(self, other):
+        other.source = self
+
+    def get_nearest(self, key):
+        return self.ngrams[key][0]
+
+
+
+
 
 
 class yNGramsStorage():

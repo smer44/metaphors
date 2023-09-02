@@ -7,7 +7,7 @@ encoding=  'utf-8'
 
 files = [input_file]
 
-linegen = yFileLinesLoader(files, encoding,-1)
+linegen = yFileLinesStream(files, encoding, -1)
 
 ngrams = yNGramsStorage(linegen , "|")
 

@@ -99,11 +99,6 @@ class yNgrams:
         #print(subject, verb, genitive,dative,accusative,instrumentative, prepositive,no_case)
 
 
-    def sort_value_vector_thrashold(self, d, thrashhold_absolute):
-        for key, vector in d.items():
-            vector = sorted(vector.items(), key = lambda pair: -pair[1] )
-            d[key] = {key: value for key, value in vector[:thrashhold_absolute]}
-
     def yield_distances(self,d,thrashhold_absolute):
         distance_method = self.opts.get("distance_method", None)
         if  distance_method == "1w":
@@ -204,7 +199,17 @@ def connect_ngrams(ngrams , ngrams2):
 
 
 
-
+def sort_value_vector_thrashold( d, thrashhold):
+    """
+    Sorts dictionary-value by inner item-value descending
+    and stores it as
+    :param d: dict of key: dict
+    :param thrashhold:
+    :return: None, changes d
+    """
+    for key, vector in d.items():
+        vector = sorted(vector.items(), key = lambda pair: -pair[1] )
+        d[key] = {key: value for key, value in vector[:thrashhold]}
 
 
 def finalize_relation(ngrams_connected, reverced_ngrams_connected):
@@ -217,15 +222,6 @@ def finalize_relation(ngrams_connected, reverced_ngrams_connected):
             finalize_obj_dict[obj] = object_weight * subj_weight
     return finalize_dict
 
-
-def sort_inner_dicts(d, limit= None):
-    sorted_dict = dict()
-    for key, inner_dict in d.items():
-        sorted_row = sorted(inner_dict.items(),key = lambda key_value: -key_value[1])
-        if limit:
-            sorted_row =  sorted_row[:limit]
-        sorted_dict[key] = sorted_row
-    return sorted_dict
 
 
 

@@ -8,7 +8,7 @@ folder_name = "E:\data\dictionaries"
 
 files = yFileNamesStream(folder_name)
 
-linegen = yFileLinesLoader(files, encoding,-100000)
+linegen = yFileLinesStream(files, encoding, -100000)
 
 sentences = yLastItemStream(linegen, "\t")
 
