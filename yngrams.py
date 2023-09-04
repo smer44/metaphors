@@ -3,7 +3,7 @@ import sys
 
 
 
-class yNgrams:
+class yNgramsDeprecated:
 
     def __init__(self, opts):
         self.opts = dict()
@@ -227,6 +227,79 @@ def finalize_relation(ngrams_connected, reverced_ngrams_connected):
 
 
 
+class yNgramsDict:
+
+    def __init__(self):
+        self.ngrams = dict()
+
+    def store(self):
+        ngrams = self.ngrams
+        key, row = None, None
+        for new_key, item,weight in self.source:
+            if new_key is not None:
+                key = new_key
+                row = self.ngrams.setdefault(key, dict())
+            if item is not None:
+                old_weight = row.setdefault(item, 0)
+                row[item] = old_weight + weight
+                backward_row = self.ngrams.setdefault(item, dict())
+                old_backwards_weight = backward_row.setdefault(key, 0)
+                backward_row[key] = old_backwards_weight + weight
+
+
+    def cut(self , trashhold):
+        ngrams = self.ngrams
+        for key, vector in ngrams.items():
+            vector = sorted(vector.items(), key=lambda kw: -kw[1])
+            vector = vector[:trashhold]
+            vector = {key: value for key, value in vector}
+            ngrams[key] = vector
+
+
+def to_sorted_lists( ngrams, trashhold= None):
+    ngrams_obj = yNgramsList()
+    ngrams_list = ngrams_obj.ngrams
+    for key, vector in ngrams.items():
+        vector = sorted(vector.items(), key = lambda kw: -kw[1] )
+        if trashhold:
+            ngrams_list[key] = vector[:trashhold]
+        else:
+            ngrams_list[key] =vector
+
+
+    return ngrams_obj
 
 
 
+class yNgramsList:
+
+    def __init__(self):
+        self.ngrams = dict()
+
+    def start_store(self):
+        self.backward_dict = dict()
+
+
+    def new_row(self, key):
+        self.last_key = key
+        self.last_row = self.ngrams.setdefault(key, list())
+
+    def store_item(self,item,weight):
+        ngrams = self.ngrams
+        key = self.last_key
+        self.last_row.append((item,weight))
+        if item not in ngrams:
+            backward_vector_store = self.backward_dict.setdefault(item, dict())
+            assert key not in backward_vector_store
+            backward_vector_store[key] = weight
+
+    def finalize(self):
+        backward_dict = self.backward_dict
+        ngrams = self.ngrams
+        for backward_key, backward_vector_store in backward_dict.items():
+            sorted_vector = sorted(backward_vector_store.items(), key=lambda item_weight_pair: -item_weight_pair[1])
+            assert backward_key not in ngrams, f" backward_key {backward_key} is already in dictionary"
+            ngrams[backward_key] = sorted_vector
+
+    def get_nearest(self,key,range):
+        return ", ".join(kw[0] for kw in  self.ngrams[key][:range])

@@ -1,66 +1,43 @@
 import os
+from yngrams import to_sorted_lists
 
+class yStream:
 
-class yAbstractStream:
+    def __call__(self,other):
+        if isinstance(other,str):
+            other = [other]
+        self.source = other
+        return self
 
-    def __iter__(self):
-        for token in self.source:
-            yield self.action(token)
-
-
-    def action(self,token):
-        return token
-
-class yAbstractFilterStream:
-
-    def __iter__(self):
-        for token in self.source:
-            result = self.action(token)
-            if result is not None:
-                yield result
-
-
-    def action(self,token):
-        return token
-
-class yAbstractGenStream:
+    def __gt__(self, other):
+        other.source = self
+        return other
 
     def __iter__(self):
-        for token in self.source:
-            yield from self.action(token)
+        return self.iter_items
 
-    def action(self,token):
-        yield token
+    def __next__(self):
+        return next(self.iter_items)
+def toystream(*items):
+    obj = yStream()
+    obj.iter_items = iter(items)
+    return obj
 
+class yOutputFileLinesStream(yStream):
 
-class yAbstractStreamSaver:
+    def __init__(self, encoding,append=False, printout=False):
+        self.opts( encoding, append , printout)
 
-    def before(self):
-        pass
-
-    def after(self):
-        pass
-
-    def save(self):
-        self.before()
-        for token in self.source:
-            self.action(token)
-        self.after()
-
-    def action(self,token):
-        print("saved:" , token)
-
-class yFileLinesSaver(yAbstractStreamSaver):
-
-    def __init__(self,source,filename , encoding,append=False, printout=False):
-        self.opts(source, filename , encoding, append , printout)
-
-    def opts(self, source, filename , encoding, append=False, printout=False):
-        self.source = source
-        self.filename = filename
+    def opts(self, encoding, append=False, printout=False):
         self.encoding = encoding
         self.printout = printout
         self.mode  = 'a' if append else 'w'
+
+    def save(self):
+        self.before()
+        for line in self.source:
+            self.action(line)
+        self.after()
 
     def before(self):
         self.file = open(self.filename,self.mode, encoding=self.encoding)
@@ -75,8 +52,11 @@ class yFileLinesSaver(yAbstractStreamSaver):
         if self.printout :
             print(line)
 
+    def __gt__(self, other):
+        self.filename = next(other)
 
-class yFileNamesStream:
+
+class yFileNamesStream(yStream):
 
     def __init__(self,rootdir):
         self.init(rootdir)
@@ -93,7 +73,7 @@ class yFileNamesStream:
 
 
 
-class yFileLinesStream(yAbstractGenStream):
+class yInputFileLinesStream(yStream):
 
     def __init__(self, encoding, max_lines = -1):
         self.opts(  encoding, max_lines)
@@ -102,156 +82,128 @@ class yFileLinesStream(yAbstractGenStream):
         self.encoding = encoding
         self.max_lines = max_lines
 
-    def action(self, token):
-        with (open(token, 'r', encoding=self.encoding) as file):
-            print("yFileLinesLoader : loading file" , token)
-            max_lines = self.max_lines
-            for line in file.readlines():
-                line = line.strip()
-                if line:
-                    if max_lines == 0:
-                        break
-                    max_lines -=1
-                    yield line
-
-    def src(self,other):
-        if isinstance(other,str):
-            other = [other]
-        self.source = other
-
-    def __gt__(self, other):
-        other.source = self
+    def __iter__(self):
+        for token in self.source:
+            with (open(token, 'r', encoding=self.encoding) as file):
+                print("yFileLinesLoader : loading file" , token)
+                max_lines = self.max_lines
+                for line in file.readlines():
+                    line = line.strip()
+                    if line:
+                        if max_lines == 0:
+                            break
+                        max_lines -=1
+                        yield line
 
 
-class yLastItemStream(yAbstractStream):
 
-    def __init__(self, source, split_symbol):
-        self.opts(source, split_symbol)
 
-    def opts(self, source, split_symbol):
-        self.source = source
+class yFilterLastLineItemStream(yStream):
+
+    def __init__(self,  split_symbol):
+        self.opts(split_symbol)
+
+    def opts(self, split_symbol):
         self.split_symbol = split_symbol
 
-    def action(self,line):
-        items = line.split(self.split_symbol)
-        return items[-1]
+    def __iter(self):
+        for line in self.source:
+            items = line.split(self.split_symbol)
+            yield items[-1]
 
-class yUniqueStream(yAbstractFilterStream):
+class yUniqueStream(yStream):
 
-    def __init__(self,source):
-        self.source = source
+    def __init__(self):
         self.last_hash = 0
 
-    def action(self,item):
-        this_hash = hash(item)
-        if this_hash != self.last_hash:
-            self.last_hash = this_hash
-            return item
+    def __iter__(self):
+        for item in self.source:
+            this_hash = hash(item)
+            if this_hash != self.last_hash:
+                self.last_hash = this_hash
+                yield item
 
-class yNGramsLinesLoad():
+class yNGramsLinesLoad:
 
     def __init__(self, split_key_value, split_list):
         self.conf(split_key_value,split_list)
-        self.ngrams = dict()
 
     def conf(self, split_key_value, split_list):
         self.split_key_value = split_key_value
         self.split_list =split_list
 
 
-    def store(self):
+    def __iter__(self):
+
         for line in self.source:
             line = line.strip()
-            ngrams = self.ngrams
-            backward_dict = dict()
             if line:
-                #vector = line.split(self.split_key_value, maxsplit = 2)
-                #print(vector)
                 key, vector = line.split(self.split_key_value, maxsplit = 1)
                 key, vector = key.strip(), vector.strip()
-                assert key not in ngrams , f" key {key} is already in dictionary :\n - line {line}\n vector : {vector}"
-                vector_store = ngrams.setdefault(key, list())
+
+                yield key, None, None
                 for item_pair in vector.split(self.split_list):
                     item_pair = item_pair.strip()
                     item , weight = item_pair.split(self.split_key_value)
                     item, weight = item.strip(), weight.strip()
                     weight = int(weight)
-                    vector_store.append((item,weight))
-                    if item not in ngrams:
-                        backward_vector_store = backward_dict.setdefault(item, dict())
-                        assert key not in backward_vector_store
-                        backward_vector_store[key] = weight
-
-        for backward_key,  backward_vector_store in backward_dict.items():
-            sorted_vector = sorted( backward_vector_store.items() , key = lambda item_weight_pair : -item_weight_pair[1] )
-            assert backward_key not in  ngrams , f" backward_key {backward_key} is already in dictionary"
-            ngrams[backward_key] = sorted_vector
-
-
-    def __gt__(self, other):
-        other.source = self
-
-    def get_nearest(self, key):
-        return self.ngrams[key][0]
+                    yield None, item, weight
 
 
 
 
+class yNGramsRawLoad(yStream):
 
+    def __init__(self,  split_symbol, backwards):
+        self.init(split_symbol, backwards)
 
-class yNGramsStorage():
-
-    def __init__(self, source, split_symbol):
-        self.init(source, split_symbol)
-
-    def init(self, source, split_symbol):
-        self.source = source
+    def init(self, split_symbol, backwards):
         self.split_symbol = split_symbol
-        self.ngrams= dict()
+        self.backwards = backwards
 
     def store2(self):
         for line in self.source:
             items = line.split(self.split_symbol)
             items = [item.strip() for item in items]
-            #subject, verb, *objects = items
             subject, verb, *objects = items
-            #objects = [verb]
-            vector_dict = self.ngrams.setdefault(subject, dict())
+            key = subject
+            yield key, None,None
             for object in objects:
-                key_inside_vector = verb, object
-                old_count = vector_dict.setdefault(key_inside_vector, 0)
-                vector_dict[key_inside_vector] = old_count + 1
+                item = verb,object
+                yield None, item, 1
 
-    def store(self):
+    def __iter__(self):
+        backwards = self.backwards
         for line in self.source:
             items = line.split(self.split_symbol)
             items = [item.strip() for item in items]
             if len(items) != 3 :
                 continue
-            subject, verb, weight = items
+
+            if backwards:
+                 item, key, weight = items
+            else:
+                key, item,  weight = items
+
+
             weight = int(weight)
-            vector_dict = self.ngrams.setdefault(subject, dict())
-
-            key_inside_vector = verb
-            old_count = vector_dict.setdefault(key_inside_vector, 0)
-            vector_dict[key_inside_vector] = old_count + weight
+            yield key, item,  weight
 
 
 
 
+class yDistancesLinesStream(yStream):
 
-    def clear_ngrams(self):
-        thrashhold_absolute = 30
-        d = self.ngrams
-        for key, vector in d.items():
-            vector = sorted(vector.items(), key=lambda pair: -pair[1])
-            d[key] = {key: value for key, value in vector[:thrashhold_absolute]}
+    def __init__(self,dictionary,trashhold):
+        self.init(dictionary,trashhold)
 
+    def init(self,dictionary,trashhold):
+        self.dictionary = dictionary
+        self.trashhold = trashhold
 
-
-    def yield_first_method(self):
-        d = self.ngrams
-        thrashhold_absolute = 20
+    def __iter__(self):
+        d = self.dictionary
+        trashhold = self.trashhold
         keys = list(d.keys())
         len_keys = len(keys)
         for i in range(len_keys-1):
@@ -262,11 +214,12 @@ class yNGramsStorage():
                 next_key = keys[j]
                 next_value = d[next_key]
                 common_keys = value.keys() & next_value.keys()
-                distance = sum(min(value[x], next_value[x]) for x in common_keys)
+                #distance = sum(min(value[x], next_value[x]) for x in common_keys)
+                distance = len(common_keys)
                 if distance > 0:
                     output_vector.append((next_key, distance))
             output_vector = sorted(output_vector, key=lambda pair: -pair[1])
-            output_vector = output_vector[:thrashhold_absolute]
+            output_vector = output_vector[:trashhold]
             line = self.format_output(key, output_vector)
             if line:
                 yield line
@@ -284,7 +237,7 @@ class yNGramsStorage():
 
 
 
-class yClausesSpacy(yAbstractGenStream):
+class yClausesSpacy(yStream):
 
     def __init__(self,source,spacy_lib,lang_name):
         self.init(source,spacy_lib,lang_name)
@@ -327,26 +280,6 @@ class yClausesSpacy(yAbstractGenStream):
             depth+=1
             for child in children:
                 stack.append((child,depth ))
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
