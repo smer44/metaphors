@@ -1,5 +1,7 @@
+uniques = {"Cardinality" , "Required"}
+
 text = """
-Organization: Model: @Organization.Apla
+Model: Organization
     Cardinality: 1 ## может быть создан только 1 индивид
     Role: director
         Cardinality: 1
@@ -12,7 +14,7 @@ Organization: Model: @Organization.Apla
         Cardinality: 0
 """
 
-"""
+instance_text = """
 Organization: test organisation
     director : ivanov
     admin : petrov
@@ -40,6 +42,8 @@ class Entity:
         return msg
 
     def deep_match(self, entity):
+        pass
+
 
 
 
@@ -60,11 +64,25 @@ def ylspaces(line):
     return line[line_index:] , spaces_count
 
 
-rootobj = Entity("root" , "root")
+rootobj = dict()#Entity("root" , "root")
 obj = rootobj
 stack = []
 old_spaces_count = 0
 old_key, old_value = None, None
+
+def multiput(d,key, value):
+    if key is None:
+        return
+    if key not in d:
+        d[key] = value
+        return
+    old_value = d[key]
+    if isinstance(old_value,list):
+        old_value.append(value)
+    else:
+        d[key] = [old_value, value]
+
+
 for line in text.split("\n"):
 
     if line:
@@ -74,27 +92,36 @@ for line in text.split("\n"):
         key, value = line.split(":",1)
         print(spaces_count , key , " - - " , value)
         if spaces_count > old_spaces_count:
-            inner_entity = Entity(old_key, old_value)
+            #inner_entity = Entity(old_key, old_value)
+            inner_dict = dict()
+            #inner_dict["_type"] = old_key
+            inner_dict["_name"] = old_value
 
             stack.append((obj,old_spaces_count))
 
-            obj.children.append(inner_entity)
-            obj = inner_entity
+            #obj.children.append(inner_entity)
+            multiput(obj,old_key,inner_dict)
+            #obj.setdefault(old_key, []).append( inner_dict)
+            obj = inner_dict
             old_spaces_count = spaces_count
             old_key, old_value = key, value
         elif spaces_count < old_spaces_count:
-            if old_key:
-                obj.children.append((old_key, old_value))
+            #if old_key:
+            #    obj.setdefault(old_key, []).append( old_value)
+            multiput(obj, old_key, old_value)
             obj, old_spaces_count = stack.pop()
             old_key, old_value = key, value
 
         else:
-            if old_key:
-                obj.children.append((old_key, old_value))
+            #if old_key:
+                #obj.children.append((old_key, old_value))
+            #    obj.setdefault(old_key, []).append(old_value)
+            multiput(obj, old_key, old_value)
             old_key, old_value = key, value
 
             #print(line, spaces_count)
 
-print(rootobj.repr())
+#print(rootobj.repr())
+pp.pprint(rootobj)
 
 
