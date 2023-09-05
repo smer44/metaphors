@@ -1,17 +1,12 @@
 uniques = {"Cardinality" , "Required"}
 
 text = """
-Model: Organization
-    Cardinality: 1 ## может быть создан только 1 индивид
-    Role: director
-        Cardinality: 1
-        Required: 1
-
-    Role: admin
-        Cardinality: 3
-        Required: 1
-    Role: manager
-        Cardinality: 0
+class Organization ## объявление структуры класса организация 
+    director 1! ## объявление что у класса обязательно должно быть одно поле директор
+    admin 1!..3  ## объявление что у класса обязательно должно быть одно поле админ но максимум 3
+     
+    manager * ## объявление что у класса может быть любое 0-n число менеджеров 
+    worker + ##объявление что у класса может быть любое 1-n число менеджеров 
 """
 
 instance_text = """
