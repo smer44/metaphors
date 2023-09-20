@@ -1,7 +1,6 @@
 import pprint as pp
 import sys
-
-
+from yabstract import yStream
 
 class yNgramsDeprecated:
 
@@ -224,27 +223,150 @@ def finalize_relation(ngrams_connected, reverced_ngrams_connected):
 
 
 
-
-
-
-class yNgramsDict:
+class yNgramsSimpleDict(yStream):
 
     def __init__(self):
         self.ngrams = dict()
+        self.bag = list()
+
+    def store_simple(self):
+        d = self.ngrams
+        for key, key_tags, value, value_tags in self.source:
+            self.store_item_simple(d,key,value)
+            self.bag.append(key)
+
+
+    def store_item_simple(self,d, key, value):
+        row = d.setdefault(key, dict())
+        old_weight = row.setdefault(value, 0)
+        row[value] = old_weight + 1
+
+
+
+
+    def __iter__(self):
+        for key, items in self.ngrams.items():
+            yield key, items
+
+    from random import sample,choice
+
+
+    def random(self,key = None, amounts = (4,2,)):
+        if key == None:
+            key = self.choice(self.bag)
+        yield key
+        if not amounts:
+            return
+        yield "("
+        amount = amounts[0]
+        row = self.ngrams.get(key, dict()).items()
+        weightedvalues=  self.sample(row, min(amount, len(row)))
+        if amount == 1:
+            yield weightedvalues[0][0]
+        else :
+            child_amount = amounts[1:]
+            for value,weight in weightedvalues:
+                #print("value" , value)
+                yield from self.random(value, child_amount)
+
+        yield ")"
+
+
+
+
+class yNgramsTagDict(yStream):
+
+    def __init__(self):
+        self.tag_dicts = dict()
+        self.tag_pairs = dict()
+
+    def store_tags(self):
+        tag_dicts = self.tag_dicts
+        for key, key_tags,value,value_tags in self.source:
+            key_tag_str = " ".join(key_tags)
+            value_tag_str = " ".join(value_tags)
+            self.tag_pairs.setdefault(key_tag_str,set()).add(key)
+            #self.tag_pairs.add(key_tag_str + " " + value_tag_str)
+            self.store_item(key, key_tag_str,value,value_tag_str)
+            #self.store_item( value, value_tag_str,key, key_tag_str,)
+
+
+
+
+    def store_item(self,key, key_tag_str,value,value_tag_str):
+        tag_dicts = self.tag_dicts
+        key_dict = tag_dicts.setdefault(key_tag_str, dict())
+        value_tag_dict = key_dict.setdefault(key, dict())
+        value_row = value_tag_dict.setdefault(value_tag_str, dict())
+        old_weight = value_row.setdefault(value, 0)
+        value_row[value] = old_weight + 1
+        #store value_tag -> value -> empty just in case:
+        key_dict = tag_dicts.setdefault(value_tag_str, dict())
+        value_tag_dict = key_dict.setdefault(value, dict())
+
+
+
+    def __iter__(self):
+        for key_tag_str,key_dict in self.tag_dicts.items():
+            for key, value_tag_dict in key_dict.items():
+                for value_tag_str, value_row in value_tag_dict.items():
+                    for value, weight in value_row.items():
+                        yield key, key_tag_str,value,value_tag_str
+
+    from random import sample,choice
+    #TODO - check this random method
+    def random(self,key_tag = 'VERB ROOT',key = None, amounts = (4,2)):
+        key_dict = self.tag_dicts[key_tag]
+        if key == None:
+            all_keys = list(key_dict.keys())
+            #print("all_keys : " , all_keys )
+            key = self.choice(all_keys)
+            #print("key : " , key )
+        yield f"{key}:{key_tag}"#key #
+        if not amounts :
+            return
+        yield "("
+        amount = amounts[0]
+        value_tag_dict_kw = key_dict[key].items()
+        choised_value_tags = self.sample(value_tag_dict_kw, min( len(value_tag_dict_kw),amount))
+        child_amount = amounts[1:]
+        for value_tag, value_row in choised_value_tags:
+            #value_tag, value_row = self.choice(value_tag_dict.items(), 1)
+            value,weight = self.choice(list(value_row.items()))
+            #print("enter value, weight: " , value_tag, value, weight)
+            yield from self.random(value_tag, value, child_amount)
+        yield ")"
+
+
+
+
+
+
+class yNgramsDict(yStream):
+
+    def __init__(self, forwards = True, backwards = False):
+        self.init(forwards , backwards)
+        self.ngrams = dict()
+
+    def init(self,forwards = True, backwards = False):
+        self.forwards = forwards
+        self.backwards = backwards
 
     def store(self):
         ngrams = self.ngrams
+        forwards = self.forwards
+        backwards = self.backwards
         key, row = None, None
-        for new_key, item,weight in self.source:
-            if new_key is not None:
-                key = new_key
-                row = self.ngrams.setdefault(key, dict())
-            if item is not None:
-                old_weight = row.setdefault(item, 0)
-                row[item] = old_weight + weight
-                backward_row = self.ngrams.setdefault(item, dict())
-                old_backwards_weight = backward_row.setdefault(key, 0)
-                backward_row[key] = old_backwards_weight + weight
+        for key, value, weight in self.source:
+            if key is not None and value is not None:
+                if forwards:
+                    row = self.ngrams.setdefault(key, dict())
+                    old_weight = row.setdefault(value, 0)
+                    row[value] = old_weight + weight
+                if backwards:
+                    row = self.ngrams.setdefault(value, dict())
+                    old_weight = row.setdefault(key, 0)
+                    row[key] = old_weight + weight
 
 
     def cut(self , trashhold):
@@ -254,6 +376,10 @@ class yNgramsDict:
             vector = vector[:trashhold]
             vector = {key: value for key, value in vector}
             ngrams[key] = vector
+
+    def __iter__(self):
+        for key, vector in self.ngrams.items():
+            yield key, vector
 
 
 def to_sorted_lists( ngrams, trashhold= None):

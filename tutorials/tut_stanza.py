@@ -32,7 +32,7 @@ print(doc)
 validate_stanza_doc(doc)
 
 
-filename = "../../datasets/facts_gpt.txt"
+filename = "../../datasets/my_gpt/facts_gpt.txt"
 """
 with open(filename, "r", encoding='utf-8') as file:
     text = file.read()

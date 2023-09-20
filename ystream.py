@@ -1,31 +1,19 @@
 import os
 from yngrams import to_sorted_lists
+from yabstract import yStream
 
-class yStream:
+encoding_std = "utf-8"
+encoding_ru =   'cp1251'
 
-    def __call__(self,other):
-        if isinstance(other,str):
-            other = [other]
-        self.source = other
-        return self
-
-    def __gt__(self, other):
-        other.source = self
-        return other
-
-    def __iter__(self):
-        return self.iter_items
-
-    def __next__(self):
-        return next(self.iter_items)
 def toystream(*items):
     obj = yStream()
     obj.iter_items = iter(items)
     return obj
 
+
 class yOutputFileLinesStream(yStream):
 
-    def __init__(self, encoding,append=False, printout=False):
+    def __init__(self, encoding = encoding_std,append=False, printout=False):
         self.opts( encoding, append , printout)
 
     def opts(self, encoding, append=False, printout=False):
@@ -74,8 +62,16 @@ class yFileNamesStream(yStream):
 
 
 class yInputFileLinesStream(yStream):
+    """
+    Class what represents an input file stream of lines of this file,
+    splitted by file.readlines(), stripped with line.strip() and
+    empty strings are skipped
+    init variables:
+    - encoding
+    - max_lines - amount of lines, read from the file. put negative value for all lines from a file
+    """
 
-    def __init__(self, encoding, max_lines = -1):
+    def __init__(self, encoding=encoding_std, max_lines = -1):
         self.opts(  encoding, max_lines)
 
     def opts(self,  encoding, max_lines = -1):
@@ -150,16 +146,39 @@ class yNGramsLinesLoad:
                     yield None, item, weight
 
 
+class yNGramsTagsLoad(yStream):
+
+    def __init__(self, item_split ="~", tag_split = "|"):
+        self.init(item_split,tag_split)
+
+    def init(self, item_split="~", tag_split = "|"):
+        self.item_split = item_split
+        self.tag_split = tag_split
+
+    def __iter__(self):
+        item_split = self.item_split
+        tag_split = self.tag_split
+
+
+        for line in self.source:
+            items = line.split(item_split)
+            items = [item.strip() for item in items]
+            key, value = items
+            key_name, *key_tags =key.split(tag_split)
+            value_name, *value_tags =value.split(tag_split)
+            yield key_name,key_tags,value_name,value_tags
+
 
 
 class yNGramsRawLoad(yStream):
 
-    def __init__(self,  split_symbol, backwards):
-        self.init(split_symbol, backwards)
+    def __init__(self,  split_symbol,  noweight = False):
+        self.init(split_symbol, noweight)
 
-    def init(self, split_symbol, backwards):
+    def init(self, split_symbol, noweight):
         self.split_symbol = split_symbol
-        self.backwards = backwards
+        #self.backwards = backwards
+        self.noweight = noweight
 
     def store2(self):
         for line in self.source:
@@ -173,20 +192,27 @@ class yNGramsRawLoad(yStream):
                 yield None, item, 1
 
     def __iter__(self):
-        backwards = self.backwards
+        #backwards = self.backwards
+        noweight = self.noweight
+        expected_len = 2 if self.noweight else 3
+
         for line in self.source:
             items = line.split(self.split_symbol)
             items = [item.strip() for item in items]
-            if len(items) != 3 :
+            if len(items) != expected_len :
                 continue
 
-            if backwards:
-                 item, key, weight = items
+            if noweight:
+                key, item  = items
+                weight = 1
             else:
-                key, item,  weight = items
+                #if backwards:
+                #     item, key, weight = items
+                #else:
+                #    key, item,  weight = items
+                key, item, weight = items
+                weight = int(weight)
 
-
-            weight = int(weight)
             yield key, item,  weight
 
 
@@ -231,6 +257,15 @@ class yDistancesLinesStream(yStream):
             return line
 
 
+class yNgramToLinesStream(yStream):
+
+
+    def __iter__(self):
+        for key, vector in self.source:
+            if vector:
+                formatted_vecor = ",".join(f"{item}" for item in vector)
+                line = f"{key}:{formatted_vecor}\n"
+                yield line
 
 
 
@@ -239,23 +274,39 @@ class yDistancesLinesStream(yStream):
 
 class yClausesSpacy(yStream):
 
-    def __init__(self,source,spacy_lib,lang_name):
-        self.init(source,spacy_lib,lang_name)
+    en = "en_core_web_sm"
+    ru = 'ru_core_news_sm'
 
-    def init(self, source,spacy_lib, lang_name):
-        self.source = source
+    def __init__(self,lang_name, spacy_lib = None):
+
+
+        self.init(lang_name,spacy_lib = None)
+
+    def init(self, lang_name , spacy_lib):
+        if spacy_lib is None:
+            import spacy
+            spacy_lib = spacy
+
         self.spacy_lib = spacy_lib
         self.lang_name = lang_name
         self.spacy_lib.prefer_gpu()
         self.nlp = self.spacy_lib.load(self.lang_name)
 
-    def action(self, text):
-        doc = self.nlp(text)
-        for n, sentence in enumerate(doc.sents):
-            for token in sentence:
-                if token.dep_ == "ROOT":
-                    yield from self.yield_clauses(token)
-    def yield_clauses(self, root_token):
+    def __iter__(self):
+        for text in self.source:
+            doc = self.nlp(text)
+            for n, sentence in enumerate(doc.sents):
+                for token in sentence:
+                    #yield from self.yield_root_clauses(token)
+                    yield from self.yield_token_child_pairs(token)
+
+    def yield_token_child_pairs(self,token):
+        children = list(token.children)
+        for child in children:
+            yield f"{token.lemma_}|{token.pos_}|{token.dep_} ~ {child.lemma_}|{child.pos_}|{child.dep_}"
+
+    def yield_root_clauses(self, root_token):
+        if root_token.dep_ != "ROOT": return
         stack = [(root_token,0)]
         while stack:
             token,depth = stack.pop()
@@ -280,6 +331,39 @@ class yClausesSpacy(yStream):
             depth+=1
             for child in children:
                 stack.append((child,depth ))
+
+
+
+class ySplitStream(yStream):
+
+    def __init__(self, skip = " \t\r\n" , keep = ".,:;-!?'\"", lookupLen = 256):
+        self.init(skip, keep, lookupLen)
+
+
+    def init(self, skip = " \t\r\n" , keep = ".,:;-!?'\"", lookupLen = 256):
+        lookup = [0 for _ in range(lookupLen)]
+        self.lookup = lookup
+        for c in skip:
+            lookup[ord(c)] = 1
+
+        for c in keep:
+            lookup[ord(c)] = -1
+
+    def __iter__(self):
+        lookup = self.lookup
+        lookup_len = len(lookup)
+        for text in self.source:
+            assert isinstance(text, str)
+            begin = 0
+            for n, c in enumerate(text):
+                ordc = ord(c)
+                flag = lookup[ordc] if ordc < lookup_len else 0
+                if flag != 0 :
+                    if n > begin:
+                        yield text[begin:n]
+                    begin = n+1
+                    if flag < 0 :
+                        yield c
 
 
 

@@ -17,7 +17,7 @@ encoding = "utf-8"
 
 def load_ngrams2(file_v_subj,  file_v_obj):
 
-    fileLines = yFileLinesStream(encoding)
+    fileLines = yInputFileLinesStream(encoding)
     ngramsloader = yNGramsLinesLoad(split_key_value, split_list)
     ngramsDict = yNgramsDict()
 

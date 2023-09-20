@@ -1,13 +1,14 @@
 from  ystream import *
 from yngrams import yNgramsDict
 
-input_file = toystream("../datasets/Rus_word_ngramm/v_obj.txt")
+input_file = toystream("../datasets/Rus_word_ngramm/adj_n.txt")
 encoding=  'utf-8'
 
 #files = [input_file]
 
 fileLines = yInputFileLinesStream(encoding, -1)
-ngramsLoad = yNGramsRawLoad( "|", True)
+#TODO - move backwards to ngram dict and not in ngrams raw load
+ngramsLoad = yNGramsRawLoad( "|")
 
 ngramsDict = yNgramsDict()
 
@@ -20,7 +21,7 @@ ngramsDict.cut(30)
 distancesLines = yDistancesLinesStream(ngramsDict.ngrams, 30 )
 
 
-output_file = toystream("../datasets/my_out/out_obj_v_2.txt")
+output_file = toystream("../datasets/my_out/out_adj_n.txt")
 
 output = yOutputFileLinesStream(encoding)
 
