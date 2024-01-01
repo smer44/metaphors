@@ -1,16 +1,15 @@
 from  ystream import *
-from yngrams import yNgramsDict
 
 encoding=  'utf-8'
 
 
-input_file = toystream("../datasets/Rus_word_ngramm/sbj_v.txt")
+input_file = ySequence("../datasets/Rus_word_ngramm/sbj_v.txt")
 
-input_file_2 = toystream("../datasets/Rus_word_ngramm/v_obj.txt")
+input_file_2 = ySequence("../datasets/Rus_word_ngramm/v_obj.txt")
 
 fileLines = yInputFileLinesStream(encoding, -1)
 
-ngramsLoad = yNGramsRawLoad("|")
+ngramsLoad = ySim("|")
 
 ngramsDict = yNgramsDict(forwards = False, backwards = True)
 
@@ -32,7 +31,7 @@ ngramsDict.cut(30)
 
 distancesLines = yDistancesLinesStream(ngramsDict.ngrams, 30 )
 
-output_file = toystream("../datasets/my_out/out_v_subj_obj.txt")
+output_file = ySequence("../datasets/my_out/out_v_subj_obj.txt")
 
 output = yOutputFileLinesStream(encoding)
 

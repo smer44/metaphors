@@ -25,7 +25,7 @@ encoding=  'utf-8'
 
 with open(filename, 'r', encoding=encoding) as file:     text = file.read()
 
-
+text  = "десятки  вышли на улицу"
 #variants
 #девочка аня
 #девочка, которую звали

@@ -2,7 +2,7 @@ from  ystream import *
 from yngrams import yNgramsTagDict , yNgramsSimpleDict
 import spacy
 
-input_file = toystream("../datasets/my_out/out_facts_gpt.txt")
+input_file = ySequence("../datasets/my_out/out_facts_gpt.txt")
 
 file_lines = yInputFileLinesStream()
 
