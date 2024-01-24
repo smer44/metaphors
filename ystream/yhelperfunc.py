@@ -1,12 +1,12 @@
 def format_output( key, value_pairs):
     if value_pairs:
-        #formatted_value = ",".join(f"{pair[0]}:{pair[1]:.2f}" for pair in value_pairs)
-        formatted_value = ",".join(f"{pair[0]}:{pair[1]}" for pair in value_pairs)
+        #formatted_value = " ,".join(f"{pair[0]}:{pair[1]:.2f}" for pair in value_pairs)
+        formatted_value = " ,".join(f"{pair[0]}:{pair[1]}" for pair in value_pairs)
         line = f"{key}:{formatted_value}\n"
         return line
 def format_output2( key, value_pairs):
     if value_pairs:
-        formatted_value = ",".join(f"{pair[0]}:{pair[1]}:{pair[2]}" for pair in value_pairs)
+        formatted_value = " ,".join(f"{pair[0]}:{pair[1]}:{pair[2]}" for pair in value_pairs)
         line = f"{key}:{formatted_value}\n"
         return line
 def sort_clip_dict(vector,thrashhold):

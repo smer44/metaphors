@@ -32,7 +32,7 @@ class yTFIDFLines(yStream):
                     result_row[value] = tfidf
                 vector  = sort_dict(result_row)
                 line = format_output(key, vector)
-                yield (line)
+                yield line
 
 
 

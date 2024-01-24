@@ -91,15 +91,19 @@ class yInputFileLinesStream(yStream):
     - max_lines - amount of lines, read from the file. put negative value for all lines from a file
     """
 
-    def __init__(self, encoding=encoding_std, max_lines = -1):
-        self.init(  encoding, max_lines)
+    def __init__(self, encoding=encoding_std,
+                 max_lines = -1,
+                 skip_first_lines = 0):
+        self.init(  encoding, max_lines,skip_first_lines)
 
-    def init(self,  encoding, max_lines = -1):
+    def init(self,  encoding, max_lines = -1,skip_first_lines= 0):
         self.encoding = encoding
         self.max_lines = max_lines
+        self.skip_first_lines = skip_first_lines
 
     def __iter__(self):
         for token in self.source:
+            lines_to_skip = self.skip_first_lines
             print("yInputFileLinesStream loading file:", token)
             with (open(token, 'r', encoding=self.encoding) as file):
                 #print("yFileLinesLoader : loading file" , token)
@@ -107,6 +111,9 @@ class yInputFileLinesStream(yStream):
                 for line in file.readlines():
                     line = line.strip()
                     if line:
+                        if lines_to_skip > 0 :
+                            lines_to_skip -=1
+                            continue
                         if max_lines == 0:
                             break
                         max_lines -=1

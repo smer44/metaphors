@@ -43,6 +43,7 @@ def calc_inner_distances(ngrams, metric, metric_factor, trashhold):
                             dist = metric_factor * metric(vector, next_vector)
                             if dist > 0:
                                 row_distances_dict[next_key] = dist
+                                #row_distances_dict is empty
                     sorted_row = sort_clip_dict(row_distances_dict, trashhold)
                     line = format_output(key, sorted_row)
                     yield line

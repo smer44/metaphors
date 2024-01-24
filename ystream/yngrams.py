@@ -102,7 +102,7 @@ class yStorageWithBag(yStream):
 
     def store(self):
         if self.store_before_iter:
-            raise RuntimeError("yStorageSimple.store: store called while it should hapen automatically: store_before_iter is set to True")
+            raise RuntimeError("yStorageWithBag.store: store called while it should hapen automatically: store_before_iter is set to True")
 
         self.__store__()
 
@@ -210,7 +210,7 @@ class yStorageWithBag(yStream):
         elif self.iter_method == "self":
             yield self
         else:
-            raise ValueError(f"yStorageSimple.__iter__: wrong iter_method set : {self.iter_method}")
+            raise ValueError(f"yStorageWithBag.__iter__: wrong iter_method set : {self.iter_method}")
 
 
     def printall(self):

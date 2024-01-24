@@ -55,6 +55,12 @@ from .yngrams_analysis_tfidf import *
 
 from .ymetricstream import *
 
-from .ystorages import *
+from .ystorages_bag import *
+
+from .ystoragew2v import *
 
 from .yanalysis_combinations import *
+
+from .yanalysis_w2v_distances import *
+
+from .yitems_to_w2v_storage import *

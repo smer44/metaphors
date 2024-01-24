@@ -1,11 +1,11 @@
 from ystream import *
 
-input_sv_file = "../../datasets/Rus_word_ngramm/sbj_v.txt"
+input_sv_file = "../../datasets/Rus_word_ngramm/v_obj.txt"
 
-input_as_file = "../../datasets/Rus_word_ngramm/adj_n.txt"
+input_as_file = "../../datasets/Rus_word_ngramm/v_obj.txt"
 
-output_sv_file = "../../datasets/my_out/out_Rus_word_ngramm_tfidf_sv.txt"
-output_as_file = "../../datasets/my_out/out_Rus_word_ngramm_tfidf_as.txt"
+output_sv_file = "../../datasets/my_out/out_Rus_word_ngramm_tfidf_vo.txt"
+output_as_file = "../../datasets/my_out/out_Rus_word_ngramm_tfidf_ov.txt"
 
 input_folder_exclude  = "..\..\datasets\pnames"
 
@@ -36,13 +36,13 @@ split_items = ySplitSimpleStream(split_symbol,
                                  #split_len = 11,
                                  selection_to = 3 )
 
-items_to_entry = yItemsToKeyValueEntry(inverse = False,
+items_to_entry = yItemsToKeyValueEntry(inverse = True,
                                        #fill_weight = 1,
                                        weight_to_int = True
                                         )
 
 storage = yStorageWithBag(
-                         iter_method =  None,
+                         iter_method =  "self",
                          store_before_iter = True,
                          filter_before_iter = 5000,
                          add_backwards = False,
@@ -80,13 +80,13 @@ split_items = ySplitSimpleStream(split_symbol,
                                  #split_len = 11,
                                  selection_to = 3 )
 
-items_to_entry = yItemsToKeyValueEntry(inverse = True,
+items_to_entry = yItemsToKeyValueEntry(inverse = False,
                                        #fill_weight = 1,
                                        weight_to_int = True
                                         )
 
 storage = yStorageWithBag(
-                         iter_method =  None,
+                         iter_method =  "self",
                          store_before_iter = True,
                          filter_before_iter = 5000,
                          add_backwards = False,
